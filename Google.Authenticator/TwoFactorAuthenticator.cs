@@ -81,14 +81,11 @@ namespace Google.Authenticator
             var qrCodeUrl = "";
             try
             {
-                using (var qrGenerator = new QRCodeGenerator())
-                using (var qrCodeData = qrGenerator.CreateQrCode(provisionUrl, QRCodeGenerator.ECCLevel.Q))
-                using (var qrCode = new QRCode(qrCodeData))
-                using (var qrCodeImage = qrCode.GetGraphic(qrPixelsPerModule))
-                using (var ms = new MemoryStream())
+                using (var qrGen = new QRCodeGenerator())
+                using (var qrCode = qrGen.CreateQrCode(provisionUrl, QRCodeGenerator.ECCLevel.Q))
+                using (var qrBmp = new BitmapByteQRCode(qrCode))
                 {
-                    qrCodeImage.Save(ms, System.Drawing.Imaging.ImageFormat.Png);
-                    qrCodeUrl = $"data:image/png;base64,{Convert.ToBase64String(ms.ToArray())}";
+                    qrCodeUrl = $"data:image/png;base64,{Convert.ToBase64String(qrBmp.GetGraphic(qrPixelsPerModule))}";
                 }
             }
             catch (TypeInitializationException e)
